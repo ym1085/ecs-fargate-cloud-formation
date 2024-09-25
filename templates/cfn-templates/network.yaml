@@ -1,0 +1,126 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: VPC 및 네트워크 리소스 생성
+
+Resources:
+  # VPC Stack
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 172.21.0.0/16 # IP: 65,536 / First: 172.21.0.1 / Last: 172.21.255.254
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: my-vpc
+
+  # Internet Gateway Stack
+  # Properties를 통해 해당 Type(리소스)에 대해 정의가 가능해짐
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway # Cloudformation의 리소스 유형인 인터넷 게이트웨이 리소스 지정
+    Properties:
+      Tags:
+        - Key: Name
+          Value: my-igw
+
+  # Connect VPC and Internet Gateway Resource
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment # VPC와 인터넷 게이트웨이를 연결하는 리소스 타입
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  # Public Subnet A Zone (172.21.10.0/24)
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 172.21.10.0/24 # 서브넷 IP 주소 범위 (CIDR Block)
+      AvailabilityZone: !Select
+        - 0
+        - !GetAZs ''
+      MapPublicIpOnLaunch: true # Subnet에 위치한 EC2 인스턴스에 대해 public IP를 자동 생성 할 것인지?
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-PublicSubnet1 # 서브넷의 이름 태그로 스택 이름을 사용
+        - Key: Env
+          Value: stage
+
+  # Public Subnet B Zone (172.21.20.0/24)
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 172.21.20.0/24 # 서브넷 IP 주소 범위 (CIDR Block)
+      AvailabilityZone: !Select
+        - 1 # 두 번째 가용영역 선택
+        - !GetAZs ''
+      MapPublicIpOnLaunch: true # Subnet에 위치한 EC2 인스턴스에 대해 public IP를 자동 생성 할 것인지?
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-PublicSubnet2 # 서브넷의 이름 태그로 스택 이름을 사용
+        - Key: Env
+          Value: stage
+
+  # Public Subnet C Zone (172.21.30.0/24)
+  PublicSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 172.21.30.0/24 # 서브넷 IP 주소 범위 (CIDR Block)
+      AvailabilityZone: !Select
+        - 2 # 세 번째 가용영역 선택
+        - !GetAZs ''
+      MapPublicIpOnLaunch: true # Subnet에 위치한 EC2 인스턴스에 대해 public IP를 자동 생성 할 것인지?
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-PublicSubnet3 # 서브넷의 이름 태그로 스택 이름을 사용
+        - Key: Env
+          Value: stage
+
+  # Private Subnet A Zone (172.21.50.0/24)
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 172.21.50.0/24
+      AvailabilityZone: !Select
+        - 0
+        - !GetAZs ''
+      MapPublicIpOnLaunch: false # private subnet에 위치한 리소스는 자동 할당 x
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-PrivateSubnet1
+        - Key: Env
+          Value: stage
+
+  # Private Subnet B Zone (172.21.60.0/24)
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 172.21.60.0/24
+      AvailabilityZone: !Select
+        - 1
+        - !GetAZs ''
+      MapPublicIpOnLaunch: false # private subnet에 위치한 리소스는 자동 할당 x
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-PrivateSubnet2
+        - Key: Env
+          Value: stage
+
+  # Private Subnet C Zone (172.21.70.0/24)
+  PrivateSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 172.21.70.0/24
+      AvailabilityZone: !Select
+        - 2
+        - !GetAZs ''
+      MapPublicIpOnLaunch: false # private subnet에 위치한 리소스는 자동 할당 x
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-PrivateSubnet3
+        - Key: Env
+          Value: stage
