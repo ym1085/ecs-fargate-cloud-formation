@@ -24,3 +24,4 @@ project-root/
 ## References
 
 - [[Github] aws-cloudformation-fargate](https://github.com/nathanpeck/aws-cloudformation-fargate)
+- [[AWS] AWS Cloudformation으로 인프라 구축하기#1 – Network 구성하기](https://blog.bespinglobal.com/post/aws-cloudformation%EC%9C%BC%EB%A1%9C-%EC%9D%B8%ED%94%84%EB%9D%BC-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B01-network-%EA%B5%AC%EC%84%B1%ED%95%98%EA%B8%B0/)
